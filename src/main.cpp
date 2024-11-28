@@ -9,19 +9,15 @@ void setup() {
     pinMode(led, OUTPUT);
 
     Serial.begin(115200);
-    Serial.println("Hello World");
     pinMode(button, INPUT_PULLUP);
 }
 
 void loop() {
-    // digitalWrite(led, HIGH);  // turn the LED on
-    // delay(1000);              // wait for a second
-    // digitalWrite(led, LOW);   // turn the LED off
-    // delay(1000);              // wait for a second
-
-    buttonState = !digitalRead(button);
+    digitalWrite(led, LOW);
     Serial.printf("buttonState: %d\n", buttonState);
-    delay(1000);
+    if (buttonState = !digitalRead(button); buttonState) {
+        digitalWrite(led, HIGH);
+    }
 }
 
 int main() {
