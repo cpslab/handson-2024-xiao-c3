@@ -1,46 +1,65 @@
 // /Users/<username>/.platformio/packages/framework-arduinoespressif32/cores/esp32/Arduino.h
 #include <Arduino.h>
 // define led according to pin diagram in article
-const uint8_t led = D0;
-const uint8_t button = D1;
-bool buttonState = false;
-uint8_t brightness = 0;
-int16_t fadeAmount = 5;
+
+class handson_xiao_board {
+    const uint8_t led;
+    const uint8_t button;
+    bool buttonState;
+    uint8_t brightness;
+    int16_t fadeAmount;
+    unsigned long lastDebounceTime;
+    const unsigned long debounceDelay = 50;  // 50ms
+
+   public:
+    handson_xiao_board(uint8_t led, uint8_t button)
+        : led(led),
+          button(button),
+          buttonState(false),
+          brightness(0),
+          fadeAmount(5),
+          lastDebounceTime(0) {
+        Serial.begin(115200);
+        pinMode(led, OUTPUT);
+        pinMode(button, INPUT_PULLUP);
+    }
+
+    auto pressed() -> bool {
+        bool currentState = !digitalRead(button);
+        if (currentState != buttonState) {
+            lastDebounceTime = millis();
+        }
+        if ((millis() - lastDebounceTime) > debounceDelay) {
+            buttonState = currentState;
+        }
+        return buttonState;
+    }
+    auto led_fade() -> void {
+        analogWrite(led, brightness);
+        brightness = brightness + fadeAmount;
+        if (brightness == 0 || brightness >= 255) {
+            fadeAmount = -fadeAmount;
+        }
+        delay(30);
+    }
+    auto led_off() -> void { analogWrite(led, 0); }
+    auto led_on() -> void { analogWrite(led, brightness); }
+    auto set_brightness(uint8_t value) -> void { brightness = value; }
+    auto get_brightness() -> uint8_t { return brightness; }
+    auto set_fade_amount(int16_t value) -> void { fadeAmount = value; }
+};
+
+handson_xiao_board xiao(D0, D1);
 
 void setup() {
-    pinMode(led, OUTPUT);
-
+    xiao.set_brightness(255);
     Serial.begin(115200);
-    pinMode(button, INPUT_PULLUP);
+    Serial.printf("Brightness: %d\n", xiao.get_brightness());
 }
 
 void loop() {
-    // set the brightness of pin 9:
-    analogWrite(led, brightness);
-
-    // change the brightness for next time through the loop:
-    brightness = brightness + fadeAmount;
-
-    // reverse the direction of the fading at the ends of the fade:
-    if (brightness <= 0 || brightness >= 255) {
-        fadeAmount = -fadeAmount;
-    }
-    // wait for 30 milliseconds to see the dimming effect
-    delay(30);
-}
-
-void tmp() {
-    digitalWrite(led, LOW);
-    Serial.printf("buttonState: %d\n", buttonState);
-    if (buttonState = !digitalRead(button); buttonState) {
-        digitalWrite(led, HIGH);
-    }
-}
-
-int main() {
-    setup();
-    while (true) {
-        loop();
-    }
-    return 0;
+    xiao.led_on();
+    delay(1000);
+    xiao.led_off();
+    delay(1000);
 }
