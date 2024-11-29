@@ -2,22 +2,20 @@
 
 class Led {
     const uint8_t pin;
-    uint8_t brightness;
+    int16_t brightness;
     int16_t fadeAmount;
-    unsigned long lastDebounceTime;
 
    public:
-    Led(uint8_t pin)
-        : pin(pin), brightness(255), fadeAmount(5), lastDebounceTime(0) {
+    explicit Led(uint8_t pin) : pin(pin), brightness(255), fadeAmount(5) {
         pinMode(pin, OUTPUT);
     }
     auto on() -> void { analogWrite(pin, brightness); }
     auto off() -> void { analogWrite(pin, 0); }
 
-    auto fade() -> void {
+    auto step_fade() -> void {
         analogWrite(pin, brightness);
         brightness = brightness + fadeAmount;
-        if (brightness == 0 || brightness >= 255) {
+        if (brightness <= 0 || brightness >= 255) {
             fadeAmount = -fadeAmount;
         }
         delay(30);
@@ -34,17 +32,19 @@ class Button {
     bool state;
 
    public:
-    Button(uint8_t pin) : pin(pin), state(false) { pinMode(pin, INPUT_PULLUP); }
+    explicit Button(uint8_t pin) : pin(pin), state(false) {
+        pinMode(pin, INPUT_PULLUP);
+    }
 
     auto is_pressed() -> bool { return !digitalRead(pin); }
 };
 
-class handson_xiao_board {
+class Handson_xiao_board {
     Led board_led;
     Button board_button;
 
    public:
-    handson_xiao_board(uint8_t led, uint8_t button)
+    explicit Handson_xiao_board(uint8_t led, uint8_t button)
         : board_led(led), board_button(button) {};
 
     auto led() -> Led& { return board_led; }

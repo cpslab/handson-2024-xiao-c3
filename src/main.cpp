@@ -2,7 +2,7 @@
 
 #include "handson_xiao_board.hpp"
 
-handson_xiao_board board(D0, D1);
+Handson_xiao_board board(D0, D1);
 
 void setup() {
     Serial.begin(115200);
@@ -23,7 +23,7 @@ void setup() {
 
 void loop() {
     if (board.button().is_pressed()) {
-        board.led().fade();
+        board.led().step_fade();
         Serial.printf("%d\n", board.led().get_brightness());
     } else {
         board.led().off();
