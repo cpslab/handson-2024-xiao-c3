@@ -7,8 +7,6 @@
 #include "WiFi.h"
 #include "Wire.h"
 
-
-int c = 0;
 //MQTT setup
 #define AWS_IOT_PUBLISH_TOPIC   "c3/pub"
 #define AWS_IOT_SUBSCRIBE_TOPIC "c3/sub"
@@ -114,11 +112,19 @@ void setup() {
 }
 
 void loop() {
-  if(c==60){
-    publishMessage();
-    c = 0;
-  }
+   // 現在の時間を取得
+    static unsigned long lastPublishTime = 0; // 最後にメッセージを送信した時間
+    unsigned long currentMillis = millis();
+
+    // 60秒ごとにメッセージを送信
+    if (currentMillis - lastPublishTime >= 60000) { // 60秒 (60000ms)
+        publishMessage();
+        lastPublishTime = currentMillis; // 最後に送信した時間を更新
+    }
+
+    // MQTT クライアントの接続状態を維持
+    if (!client.connected()) {
+        connectAWS(); // 再接続処理
+    }
     client.loop();
-    delay(1000);
-    c++;
 }
