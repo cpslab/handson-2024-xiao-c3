@@ -107,7 +107,6 @@ void publishMessage()
 void setup() {
 
     debug.begin(115200);
-    debug.println("MQTT test!");
     Wire.begin();
     pinMode(LED_PIN, OUTPUT);
     connectAWS();
