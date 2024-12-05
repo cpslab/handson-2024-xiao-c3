@@ -105,8 +105,6 @@ void setup() {
     pinMode(LED_PIN, OUTPUT);
     connectAWS();
 }
-
-void loop() {
  void loop() {
     // 現在の時間を取得
     static unsigned long lastPublishTime = 0; // 最後にメッセージを送信した時間
@@ -123,6 +121,4 @@ void loop() {
         connectAWS(); // 再接続処理
     }
     client.loop();
-}
-
 }
