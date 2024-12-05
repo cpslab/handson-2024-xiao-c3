@@ -10,8 +10,8 @@
 
 int c = 0;
 //MQTT setup
-#define AWS_IOT_PUBLISH_TOPIC   "c3/pub"
-#define AWS_IOT_SUBSCRIBE_TOPIC "c3/sub"
+#define AWS_IOT_PUBLISH_TOPIC   "トピック名"//AWS側で設定したポリシーに合致した自分用トピック名
+#define AWS_IOT_SUBSCRIBE_TOPIC "トピック名"//AWS側で設定したポリシーに合致した自分用トピック名
 
 //network setup
 WiFiClientSecure net = WiFiClientSecure();
@@ -38,13 +38,6 @@ void messageHandler(char* topic, byte* payload, unsigned int length)
   deserializeJson(doc, payload);
   const char* message = doc["message"];
   Serial.println(message);
-
-  // メッセージに基づいてLEDを制御
-  if (strcmp(message, "on") == 0) {
-    digitalWrite(LED_PIN, HIGH); // LEDを点灯
-  } else if (strcmp(message, "off") == 0) {
-    digitalWrite(LED_PIN, LOW); // LEDを消灯
-  }
 }
 
 void connectAWS()
@@ -114,11 +107,22 @@ void setup() {
 }
 
 void loop() {
-  if(c==60){
-    publishMessage();
-    c = 0;
-  }
+ void loop() {
+    // 現在の時間を取得
+    static unsigned long lastPublishTime = 0; // 最後にメッセージを送信した時間
+    unsigned long currentMillis = millis();
+
+    // 60秒ごとにメッセージを送信
+    if (currentMillis - lastPublishTime >= 60000) { // 60秒 (60000ms)
+        publishMessage();
+        lastPublishTime = currentMillis; // 最後に送信した時間を更新
+    }
+
+    // MQTT クライアントの接続状態を維持
+    if (!client.connected()) {
+        connectAWS(); // 再接続処理
+    }
     client.loop();
-    delay(1000);
-    c++;
+}
+
 }
