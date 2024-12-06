@@ -1,46 +1,41 @@
-#include <vector>
-#include "handson_xiao_board.hpp"
-#include "secret.h"
-#include <WiFiClientSecure.h>
 #include <ArduinoJson.h>
+#include <WiFiClientSecure.h>
+
+#include <vector>
+
 #include "WiFi.h"
 #include "Wire.h"
+#include "handson_xiao_board.hpp"
+#include "secret.h"
 
-
-//network setup
+// network setup
 WiFiClientSecure net = WiFiClientSecure();
 
-#if defined(ARDUINO_ARCH_AVR)
-    #define debug  Serial
+void connectWiFi() {
+    delay(2000);  // シリアルモニタの表示が見やすくなるための遅延
+    Serial.println();
+    Serial.println();
+    Serial.print("Connecting to ");
+    Serial.println(WIFI_SSID);
 
-#elif defined(ARDUINO_ARCH_SAMD) ||  defined(ARDUINO_ARCH_SAM)
-    #define debug  SerialUSB
-#else
-    #define debug  Serial
-#endif
+    WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
 
-void connectWiFi()
-{
-  delay(2000);//シリアルモニタの表示が見やすくなるための遅延
-  WiFi.mode(WIFI_STA);
-  WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
- 
-  Serial.println("Connecting to Wi-Fi");
- 
-  while (WiFi.status() != WL_CONNECTED)
-  {
-    delay(500);
-    Serial.print(".");
-  }
-  Serial.println("Wi-Fi ちゃんと Connected!");
+    Serial.println("Connecting to Wi-Fi");
+
+    while (WiFi.status() != WL_CONNECTED) {
+        delay(500);
+        Serial.print(".");
+    }
+
+    Serial.println("");
+    Serial.println("WiFi connected");
+    Serial.println("IP address: ");
+    Serial.println(WiFi.localIP());
 }
 
 void setup() {
-    debug.begin(115200);
-    Wire.begin();
+    Serial.begin(115200);
     connectWiFi();
 }
 
-void loop() {
-    delay(1000);
-}
+void loop() {}
