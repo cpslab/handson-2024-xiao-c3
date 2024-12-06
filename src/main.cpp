@@ -5,14 +5,14 @@
 
 #include "WiFi.h"
 #include "Wire.h"
+#include "cert/secret.h"
 #include "handson_xiao_board.hpp"
-#include "secret.h"
 
 // network setup
 WiFiClientSecure net = WiFiClientSecure();
 
 void connectWiFi() {
-    delay(2000);  // シリアルモニタの表示が見やすくなるための遅延
+    delay(200);
     Serial.println();
     Serial.println();
     Serial.print("Connecting to ");
@@ -28,9 +28,9 @@ void connectWiFi() {
     }
 
     Serial.println("");
-    Serial.println("WiFi connected");
     Serial.println("IP address: ");
     Serial.println(WiFi.localIP());
+    Serial.println("WiFi connected");
 }
 
 void setup() {
