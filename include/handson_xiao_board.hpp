@@ -21,8 +21,8 @@ class Led {
         delay(30);
     }
 
-    auto set_brightness(uint8_t value) -> void { brightness = value; }
-    auto get_brightness() -> uint8_t { return brightness; }
+    auto set_brightness(int16_t value) -> void { brightness = value; }
+    auto get_brightness() -> int16_t { return brightness; }
     auto set_fade_amount(int16_t value) -> void { fadeAmount = value; }
     auto get_fade_amount() -> int16_t { return fadeAmount; }
 };
